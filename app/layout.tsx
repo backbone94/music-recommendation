@@ -1,3 +1,6 @@
+import Link from 'next/link';
+import Image from 'next/image';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -5,7 +8,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <header>
+          <Link href="/">
+            <Image
+              src="/favicon.ico"
+              alt="Home"
+              width={50}
+              height={50}
+              style={{ cursor: 'pointer' }}
+            />
+          </Link>
+        </header>
+        {children}
+      </body>
     </html>
   );
 }

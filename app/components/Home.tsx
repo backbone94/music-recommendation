@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { deleteUser } from '@/app/actions/deleteUser';
+import { deleteUser } from '@/app/actions/user';
 
 const Home = () => {
   const router = useRouter();
@@ -24,6 +24,10 @@ const Home = () => {
     } catch (error) {
       console.error('Failed to delete user:', error);
     }
+  }
+
+  const handleWrite = () => {
+    router.push('/diary');
   }
 
   if (status === 'loading') {
@@ -51,6 +55,13 @@ const Home = () => {
         {session && (
           <button onClick={handleWithdrawal}>
             withdrawal
+          </button>
+        )}
+      </div>
+      <div>
+        {session && (
+          <button onClick={handleWrite}>
+            일기 목록
           </button>
         )}
       </div>

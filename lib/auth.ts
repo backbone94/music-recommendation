@@ -17,22 +17,6 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      if (!account) {
-        return token;
-      }
-      token.provider = account.provider;
-      token.providerAccountId = account.providerAccountId;
-      return token;
-    },
-    async session({ session, token }) {
-      if (!session || !session.user) {
-        return session;
-      }
-      session.user.provider = token.provider as string;
-      session.user.providerAccountId = token.providerAccountId as string;
-      return session;
-    },
     async signIn({ user, account, profile }) {
       if (!account) {
         console.error("Account information is missing.");
@@ -61,6 +45,31 @@ export const authOptions: NextAuthOptions = {
         return false;
       }
       return true;
+    },
+    async jwt({ token, account, user }) {
+      if (!account || !user) {
+        return token;
+      }
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          provider: account.provider,
+          providerAccountId: account.providerAccountId,
+        },
+      });
+
+      token.userId = existingUser ? existingUser.id : Number(user.id);
+      token.provider = account.provider;
+      token.providerAccountId = account.providerAccountId;
+      return token;
+    },
+    async session({ session, token }) {
+      if (!session || !session.user) {
+        return session;
+      }
+      session.user.id = token.userId;
+      session.user.provider = token.provider;
+      session.user.providerAccountId = token.providerAccountId;
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
