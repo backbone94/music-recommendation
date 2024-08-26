@@ -3,6 +3,7 @@ export type SpotifyArtist = {
 };
 
 export type SpotifyTrack = {
+  id: number;
   name: string;
   artists: SpotifyArtist[];
   popularity: number;

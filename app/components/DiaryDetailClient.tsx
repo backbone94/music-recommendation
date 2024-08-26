@@ -26,7 +26,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     negative: 0,
     neutral: 0,
   });
-  const [tracks, setTracks] = useState([]);
+  const [tracks, setTracks] = useState<Track[]>([]);
 
   const data = {
     labels: ['긍정', '부정', '중립'],
@@ -57,7 +57,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     const fetchMusicRecommendations = async () => {
       try {
         const keywords = await extractKeywords(diary.content);
-        const result = await recommendMusic(keywords);
+        const result: Track[] = await recommendMusic(keywords);
         setTracks(result)
       } catch (error) {
         console.error('Failed to recommend music:', error);
