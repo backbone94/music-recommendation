@@ -39,5 +39,4 @@ next-env.d.ts
 .env
 
 # Prisma 관련 파일
-prisma/migrations/
 prisma/client/
