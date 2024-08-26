@@ -4,8 +4,30 @@ import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
+import axios from 'axios';
 
 const prisma = new PrismaClient();
+
+export const analyzeSentiment = async (content: string) => {
+  try {
+    const response = await axios.post(
+      'https://naveropenapi.apigw.ntruss.com/sentiment-analysis/v1/analyze',
+      { content },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-NCP-APIGW-API-KEY-ID': process.env.NAVER_CLIENT_ID || '',
+          'X-NCP-APIGW-API-KEY': process.env.NAVER_CLIENT_SECRET || '',
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error analyzing sentiment:', error);
+    throw new Error('Failed to analyze sentiment');
+  }
+}
 
 export async function writeDiary(title: string, content: string) {
   const session = await getServerSession(authOptions);
