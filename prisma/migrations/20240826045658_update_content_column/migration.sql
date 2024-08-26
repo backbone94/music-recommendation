@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `diary` MODIFY `content` TEXT NOT NULL;
+ALTER TABLE `Diary` MODIFY `content` TEXT NOT NULL;
