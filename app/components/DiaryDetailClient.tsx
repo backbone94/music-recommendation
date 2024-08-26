@@ -16,6 +16,7 @@ import {
 import { useEffect, useState } from 'react';
 import { analyzeSentiment } from '@/app/actions/diary';
 import { Track } from '@/types/client';
+import { searchYouTube } from '../actions/youtube';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -57,8 +58,16 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     const fetchMusicRecommendations = async () => {
       try {
         const keywords = await extractKeywords(diary.content);
-        const result: Track[] = await recommendMusic(keywords);
-        setTracks(result)
+        const tracks: Track[] = await recommendMusic(keywords);
+
+        const updatedTracks: Track[] = await Promise.all(
+          tracks.map(async (track) => {
+            const youtubeUrl = await searchYouTube(track.name);
+            return { ...track, url: youtubeUrl };
+          })
+        );
+
+        setTracks(updatedTracks);
       } catch (error) {
         console.error('Failed to recommend music:', error);
       }
