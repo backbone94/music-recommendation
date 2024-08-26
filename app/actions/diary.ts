@@ -41,8 +41,8 @@ export const recommendMusic = async (keywords: string[]) => {
       },
     );
 
-    const tracks = searchResponse.data.tracks.items;
-
+    const tracks: SpotifyTrack[] = searchResponse.data.tracks.items;
+    tracks.sort((a, b) => b.popularity - a.popularity);
     return tracks.map((track: SpotifyTrack) => ({
       name: track.name,
       artists: track.artists.map(artist => artist.name).join(', '),
