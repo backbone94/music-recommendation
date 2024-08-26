@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { deleteDiary } from '@/app/actions/diary';
+import { extractKeyword as extractKeywords, deleteDiary, recommendMusic } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { analyzeSentiment } from '@/app/actions/diary';
+import { Track } from '@/types/client';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -25,6 +26,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     negative: 0,
     neutral: 0,
   });
+  const [tracks, setTracks] = useState([]);
 
   const data = {
     labels: ['긍정', '부정', '중립'],
@@ -52,6 +54,16 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   };
 
   useEffect(() => {
+    const fetchMusicRecommendations = async () => {
+      try {
+        const keywords = await extractKeywords(diary.content);
+        const result = await recommendMusic(keywords);
+        setTracks(result)
+      } catch (error) {
+        console.error('Failed to recommend music:', error);
+      }
+    };
+
     const fetchSentimentData = async () => {
       try {
         const result = await analyzeSentiment(diary.content);
@@ -66,6 +78,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       }
     };
 
+    fetchMusicRecommendations();
     fetchSentimentData();
   }, [diary.content]);
 
@@ -93,6 +106,16 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       <div style={{ width: '500px', height: '300px', marginTop: '20px' }}>
         <Bar data={data} options={options} />
       </div>
+      <h2>Recommended Tracks</h2>
+      <ul>
+        {tracks.map((track: Track) => (
+          <li key={track.id}>
+            <a href={track.url} target="_blank" rel="noopener noreferrer">
+              {track.name} by {track.artists}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
