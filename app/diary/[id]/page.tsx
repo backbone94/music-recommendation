@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import DiaryDetailClient from '@/app/components/DiaryDetailClient';
+import DiaryDetailClientWrapper from '@/app/components/DiaryDetailClientWrapper';
 
 const prisma = new PrismaClient();
 
@@ -14,5 +14,5 @@ export default async function DiaryDetailPage({ params }: { params: { id: string
     return <div>Diary not found</div>;
   }
 
-  return <DiaryDetailClient diary={diary} />;
+  return <DiaryDetailClientWrapper diary={diary} />;
 }

@@ -13,7 +13,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { TrackClient } from '@/types/spotify';
 import { Sentiment } from '@/types/sentiment';
 import { analyzeSentiment } from '../actions/sentiment';
@@ -25,20 +25,55 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
-  const [sentiment, setSentiment] = useState({
-    positive: 0,
-    negative: 0,
-    neutral: 0,
-  });
-  const [track, setTrack] = useState<TrackClient | null>(null);
-  const [videoId, setVideoId] = useState('');
+
+  const { data: sentiment, error: sentimentError, isLoading: sentimentLoading } = useQuery(
+    ['sentiment', diary.content],
+    () => analyzeSentiment(diary.content),
+    {
+      enabled: !!diary.content,
+      select: (result) => result.document.confidence as Sentiment,
+    }
+  );
+
+  const { data: track } = useQuery(
+    ['track', sentiment],
+    () => {
+      if (!sentiment) {
+        throw new Error('Sentiment data is undefined');
+      }
+      return recommendMusic(sentiment);
+    },
+    {
+      enabled: false,
+      initialData: { // Mock 데이터 사용
+        id: 123123123,
+        albumImageUrl: 'https://i.scdn.co/image/ab67616d0000b27388bfb4afe3a9acee2b578f63',
+        artists: 'epic high',
+        name: 'fly',
+      } as TrackClient,
+    }
+  );
+
+  const { data: videoId } = useQuery(
+    ['youtube', track],
+    () => {
+      if (!track) {
+        throw new Error('track data is undefined');
+      }
+      return searchYouTube(track.name, track.artists);
+    },
+    {
+      enabled: false,
+      initialData: 'sHqLlyBlmQI', // Mock 데이터 사용
+    }
+  );
 
   const data = {
     labels: ['긍정', '부정', '중립'],
     datasets: [
       {
         label: '감정 비율 (%)',
-        data: [sentiment.positive, sentiment.negative, sentiment.neutral],
+        data: [sentiment?.positive || 0, sentiment?.negative || 0, sentiment?.neutral || 0],
         backgroundColor: ['green', 'red', 'gray'],
         borderColor: ['green', 'red', 'gray'],
       },
@@ -68,66 +103,6 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     return videoIdMatch ? videoIdMatch[1] : null;
   };
 
-  useEffect(() => {
-    const fetchSentiment = async () => {
-      try {
-        const result = await analyzeSentiment(diary.content);
-        const sentiment = result.document.confidence as Sentiment;
-        setSentiment(sentiment);
-      } catch (error) {
-        console.error('Failed to analyze sentiment:', error);
-      }
-    };
-
-    fetchSentiment();
-  }, [diary.content]);
-
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      const isSentimentInitialized =
-        sentiment.positive !== 0 ||
-        sentiment.negative !== 0 ||
-        sentiment.neutral !== 0;
-
-      if (!isSentimentInitialized) {
-        return;
-      }
-
-      try {
-        // const recommendedTrack = await recommendMusic(sentiment);
-        // mock 데이터
-        const recommendedTrack: TrackClient = {
-          id: 123123123,
-          albumImageUrl: 'https://i.scdn.co/image/ab67616d0000b27388bfb4afe3a9acee2b578f63',
-          artists: 'epic high',
-          name: 'fly',
-        };
-        setTrack(recommendedTrack);
-      } catch (error) {
-        console.error('Failed to recommend music:', error);
-      }
-    };
-
-    fetchRecommendations();
-  }, [sentiment]);
-
-  useEffect(() => {
-    if (track === null) {
-      return;
-    }
-    const fetchYoutubeVideo = async () => {
-      try {
-        //  const videoUrl = await searchYouTube(track.name, track.artists);
-        // Mock 데이터
-         setVideoId('sHqLlyBlmQI');
-      } catch (error) {
-        console.error('Failed to fetch video:', error);
-      }
-    }
-
-    fetchYoutubeVideo();
-  }, [track])
-
   const handleDelete = async () => {
     try {
       await deleteDiary(diary.id);
@@ -140,6 +115,14 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const handleUpdate = () => {
     router.push(`/diary/${diary.id}/edit`);
   };
+
+  if (sentimentLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (sentimentError) {
+    return <div>Error occurred while fetching data.</div>;
+  }
 
   return (
     <div>
