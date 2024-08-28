@@ -31,7 +31,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     neutral: 0,
   });
   const [track, setTrack] = useState<TrackClient | null>(null);
-  const [videoUrl, setVideoUrl] = useState('');
+  const [videoId, setVideoId] = useState('');
 
   const data = {
     labels: ['긍정', '부정', '중립'],
@@ -67,8 +67,6 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
     return videoIdMatch ? videoIdMatch[1] : null;
   };
-
-  const videoId = videoUrl ? extractVideoId(videoUrl) : null;
 
   useEffect(() => {
     const fetchSentiment = async () => {
@@ -119,8 +117,9 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     }
     const fetchYoutubeVideo = async () => {
       try {
-         const videoUrl = await searchYouTube(track.name, track.artists);
-         setVideoUrl(videoUrl);
+        //  const videoUrl = await searchYouTube(track.name, track.artists);
+        // Mock 데이터
+         setVideoId('sHqLlyBlmQI');
       } catch (error) {
         console.error('Failed to fetch video:', error);
       }
@@ -156,28 +155,34 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
         </div>
       )}
 
-      <h2>Recommended Tracks</h2>
-      {track && (<Image src={track.albumImageUrl} width="320" height="320" alt="album" />)}
-      <ul>
-      {track && (
-        <a href={track.url} target="_blank" rel="noopener noreferrer">
-          {track.name} by {track.artists}
-        </a>
-      )}
-      </ul>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+        {track && (
+          <div style={{ flex: 1, marginRight: '20px' }}>
+            <h2>Recommended Tracks</h2>
+            <Image src={track.albumImageUrl} width="320" height="320" alt="album" />
+            <ul>
+              <li>
+                <a href={track.url} target="_blank" rel="noopener noreferrer">
+                  {track.name} by {track.artists}
+                </a>
+              </li>
+            </ul>
+          </div>
+        )}
 
-      {videoId && (
-        <div>
-          <h2>Related YouTube Video</h2>
-          <iframe
-            width="560"
-            height="315"
-            src={`https://www.youtube.com/embed/${videoId}`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
-      )}
+        {videoId && (
+          <div style={{ flex: 1 }}>
+            <h2>Related YouTube Video</h2>
+            <iframe
+              width="100%"
+              height="315"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
