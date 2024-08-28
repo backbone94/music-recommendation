@@ -17,6 +17,7 @@ export default function RootLayout({
               width={50}
               height={50}
               style={{ cursor: 'pointer' }}
+              priority={true}
             />
           </Link>
         </header>
