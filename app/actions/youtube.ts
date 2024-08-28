@@ -2,16 +2,16 @@
 
 import axios from "axios";
 
-export const searchYouTube = async (trackName: string): Promise<string> => {
+export const searchYouTube = async (trackName: string, artists: string): Promise<string> => {
   try {
     const searchResponse = await axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: 'snippet',
-        q: trackName,
+        q: `${trackName} ${artists}`,
         type: 'video',
         key: process.env.GOOGLE_CLIENT_SECRET,
         maxResults: 1,
-        order: 'viewCount',
+        order: 'relevance',
       },
     });
 
