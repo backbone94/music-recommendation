@@ -25,6 +25,11 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
 
+  const extractVideoId = (url: string) => {
+    const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
+    return videoIdMatch ? videoIdMatch[1] : null;
+  };
+
   const { data: sentiment, error: sentimentError, isLoading: sentimentLoading } = useQuery(
     'sentiment',
     () => analyzeSentiment(diary.content),
@@ -79,11 +84,6 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
         max: 100,
       },
     },
-  };
-
-  const extractVideoId = (url: string) => {
-    const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
-    return videoIdMatch ? videoIdMatch[1] : null;
   };
 
   const handleDelete = async () => {
