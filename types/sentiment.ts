@@ -1,5 +1,10 @@
+export enum SentimentType {
+  POSITIVE = 'positive',
+  NEGATIVE = 'negative',
+  NEUTRAL = 'neutral',
+}
+
 export type Sentiment = {
-  positive: number,
-  negative: number,
-  neutral: number,
+  main: SentimentType,
+  scores: Record<SentimentType, number>;
 };
