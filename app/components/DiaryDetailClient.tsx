@@ -14,7 +14,6 @@ import {
   Legend,
 } from 'chart.js';
 import { useQuery } from 'react-query';
-import { TrackClient } from '@/types/spotify';
 import { Sentiment } from '@/types/sentiment';
 import { analyzeSentiment } from '../actions/sentiment';
 import { recommendMusic } from '../actions/music';
@@ -27,7 +26,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
 
   const { data: sentiment, error: sentimentError, isLoading: sentimentLoading } = useQuery(
-    ['sentiment', diary.content],
+    'sentiment',
     () => analyzeSentiment(diary.content),
     {
       enabled: !!diary.content,
@@ -35,36 +34,20 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     }
   );
 
-  const { data: track } = useQuery(
-    ['track', sentiment],
-    () => {
-      if (!sentiment) {
-        throw new Error('Sentiment data is undefined');
-      }
-      return recommendMusic(sentiment);
-    },
+  const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
+    'track',
+    () => recommendMusic(sentiment!),
     {
-      enabled: false,
-      initialData: { // Mock 데이터 사용
-        id: 123123123,
-        albumImageUrl: 'https://i.scdn.co/image/ab67616d0000b27388bfb4afe3a9acee2b578f63',
-        artists: 'epic high',
-        name: 'fly',
-      } as TrackClient,
+      enabled: !!sentiment,
     }
   );
 
-  const { data: videoId } = useQuery(
-    ['youtube', track],
-    () => {
-      if (!track) {
-        throw new Error('track data is undefined');
-      }
-      return searchYouTube(track.name, track.artists);
-    },
+  const { data: videoId, error: videoError, isLoading: videoLoading } = useQuery(
+    'youtube',
+    () => searchYouTube(track!.name, track!.artists),
     {
-      enabled: false,
-      initialData: 'sHqLlyBlmQI', // Mock 데이터 사용
+      enabled: !!track,
+      select: (videoUrl) => extractVideoId(videoUrl),
     }
   );
 
@@ -139,31 +122,43 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-        {track && (
-          <div style={{ flex: 1, marginRight: '20px' }}>
-            <h2>Recommended Tracks</h2>
-            <Image src={track.albumImageUrl} width="320" height="320" alt="album" />
-            <ul>
-              <li>
-                <a href={track.url} target="_blank" rel="noopener noreferrer">
-                  {track.name} by {track.artists}
-                </a>
-              </li>
-            </ul>
-          </div>
-        )}
+        {trackLoading ? (
+            <div>Loading track...</div>
+          ) : trackError ? (
+            <div>Error occurred while fetching track data.</div>
+          ) : (
+            track && (
+              <div style={{ flex: 1, marginRight: '20px' }}>
+                <h2>Recommended Tracks</h2>
+                <Image src={track.albumImageUrl} width="320" height="320" alt="album" />
+                <ul>
+                  <li>
+                    <a href={track.url} target="_blank" rel="noopener noreferrer">
+                      {track.name} by {track.artists}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )
+          )}
 
-        {videoId && (
-          <div style={{ flex: 1 }}>
-            <h2>Related YouTube Video</h2>
-            <iframe
-              width="100%"
-              height="315"
-              src={`https://www.youtube.com/embed/${videoId}`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
+        {videoLoading ? (
+          <div>Loading video...</div>
+        ) : videoError ? (
+          <div>Error occurred while fetching video data.</div>
+        ) : (
+          videoId && (
+            <div style={{ flex: 1 }}>
+              <h2>Related YouTube Video</h2>
+              <iframe
+                width="100%"
+                height="315"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          )
         )}
       </div>
     </div>
