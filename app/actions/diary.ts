@@ -54,6 +54,12 @@ export async function updateDiary(diaryId: number, title: string, content: strin
     throw new Error('Diary not found or you do not have permission to edit this diary.');
   }
 
+  const sentimentData = await analyzeSentiment(content);
+  const sentiment: Sentiment = {
+    main: sentimentData.document.sentiment,
+    scores: sentimentData.document.confidence,
+  }
+
   await prisma.diary.update({
     where: {
       id: diaryId,
@@ -61,6 +67,7 @@ export async function updateDiary(diaryId: number, title: string, content: strin
     data: {
       title,
       content,
+      sentiment: JSON.stringify(sentiment),
     },
   });
 
