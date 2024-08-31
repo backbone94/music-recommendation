@@ -15,6 +15,7 @@ export async function writeDiary(title: string, content: string) {
 
   try {
     const sentimentData = await analyzeSentiment(content);
+    const { positive, negative, neutral } = sentimentData.document.confidence;
 
     await prisma.diary.create({
       data: {
@@ -22,7 +23,9 @@ export async function writeDiary(title: string, content: string) {
         content,
         userId: Number(session.user.id),
         mainSentiment: sentimentData.document.sentiment,
-        sentimentScores: sentimentData.document.confidence,
+        positive,
+        negative,
+        neutral,
       },
     });
 
@@ -51,6 +54,7 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   }
 
   const sentimentData = await analyzeSentiment(content);
+  const { positive, negative, neutral } = sentimentData.document.confidence;
 
   await prisma.diary.update({
     where: {
@@ -61,7 +65,9 @@ export async function updateDiary(diaryId: number, title: string, content: strin
       content,
       userId: Number(session.user.id),
       mainSentiment: sentimentData.document.sentiment,
-      sentimentScores: sentimentData.document.confidence,
+      positive,
+      negative,
+      neutral,
     },
   });
 

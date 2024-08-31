@@ -65,19 +65,20 @@ export const recommendMusic = async (sentimentScores: SentimentScores) => {
 };
 
 const getRecommendationParams = (sentimentScores: SentimentScores) => {
+  const { positive, negative, neutral } = sentimentScores;
   let seedGenres = 'pop';
   let targetEnergy;
   let targetValence;
 
-  if (sentimentScores.positive >= 50) {
-    targetEnergy = sentimentScores.positive / 100;
-    targetValence = sentimentScores.positive / 100;
-  } else if (sentimentScores.negative >= 50) {
-    targetEnergy = sentimentScores.negative / 100;
-    targetValence = sentimentScores.negative / 100;
+  if (positive >= 50) {
+    targetEnergy = positive / 100;
+    targetValence = positive / 100;
+  } else if (negative >= 50) {
+    targetEnergy = negative / 100;
+    targetValence = negative / 100;
   } else {
-    targetEnergy = sentimentScores.neutral / 100;
-    targetValence = sentimentScores.neutral / 100;
+    targetEnergy = neutral / 100;
+    targetValence = neutral / 100;
   }
 
   return {

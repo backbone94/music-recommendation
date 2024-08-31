@@ -12,7 +12,7 @@ import BarChart from './BarChart';
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
-  const sentimentScores: SentimentScores = JSON.parse(JSON.stringify(diary.sentimentScores));
+  const { positive, negative,neutral } = diary;
 
   const extractVideoId = (url: string) => {
     const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
@@ -21,9 +21,9 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
 
   const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
     'track',
-    () => recommendMusic(sentimentScores),
+    () => recommendMusic({ positive, negative, neutral }),
     {
-      enabled: !!sentimentScores,
+      enabled: !!diary,
     }
   );
 
@@ -57,7 +57,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       <button onClick={handleUpdate}>Update Diary</button>
       <button onClick={handleDelete}>Delete Diary</button>
 
-      {sentimentScores && <BarChart sentimentScores={sentimentScores} />}
+      <BarChart sentimentScores={{positive, negative, neutral}} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
         {trackLoading ? (
