@@ -14,6 +14,9 @@ export default function DiaryListClient({ diaries }: { diaries: Diary[] }) {
         <button onClick={() => router.push('/diary/new')}>
           Write New Diary
         </button>
+        <button onClick={() => router.push('/diary/history')}>
+          히스토리
+        </button>
       </div>
       <ul>
         {diaries.map((diary) => (

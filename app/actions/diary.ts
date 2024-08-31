@@ -74,6 +74,30 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   revalidatePath(`/diary/${diaryId}`);
 }
 
+export async function getDiariesByUserId() {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    throw new Error('Not authenticated');
+  }
+
+  try {
+    const diaries = await prisma.diary.findMany({
+      where: {
+        userId: session.user.id,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    return diaries;
+  } catch (error) {
+    console.error('Error fetching diaries:', error);
+    throw new Error('Failed to fetch diaries');
+  }
+}
+
 export async function deleteDiary(diaryId: number) {
   const session = await getServerSession(authOptions);
 
