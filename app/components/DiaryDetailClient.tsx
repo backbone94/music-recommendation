@@ -15,7 +15,6 @@ import {
 } from 'chart.js';
 import { useQuery } from 'react-query';
 import { Sentiment } from '@/types/sentiment';
-import { analyzeSentiment } from '../actions/sentiment';
 import { recommendMusic } from '../actions/music';
 import { searchYouTube } from '../actions/youtube';
 import Image from 'next/image';
@@ -24,24 +23,16 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
+  const sentiment: Sentiment = JSON.parse(diary.sentiment!.toString());
 
   const extractVideoId = (url: string) => {
     const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
     return videoIdMatch ? videoIdMatch[1] : null;
   };
 
-  const { data: sentiment, error: sentimentError, isLoading: sentimentLoading } = useQuery(
-    'sentiment',
-    () => analyzeSentiment(diary.content),
-    {
-      enabled: !!diary.content,
-      select: (result) => result.document.confidence as Sentiment,
-    }
-  );
-
   const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
     'track',
-    () => recommendMusic(sentiment!),
+    () => recommendMusic(sentiment),
     {
       enabled: !!sentiment,
     }
@@ -61,7 +52,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     datasets: [
       {
         label: '감정 비율 (%)',
-        data: [sentiment?.positive || 0, sentiment?.negative || 0, sentiment?.neutral || 0],
+        data: [sentiment.positive || 0, sentiment.negative || 0, sentiment.neutral || 0],
         backgroundColor: ['green', 'red', 'gray'],
         borderColor: ['green', 'red', 'gray'],
       },
@@ -98,14 +89,6 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const handleUpdate = () => {
     router.push(`/diary/${diary.id}/edit`);
   };
-
-  if (sentimentLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (sentimentError) {
-    return <div>Error occurred while fetching data.</div>;
-  }
 
   return (
     <div>

@@ -16,10 +16,7 @@ export async function writeDiary(title: string, content: string) {
 
   try {
     const sentimentData = await analyzeSentiment(content);
-    const sentiment: Sentiment = {
-      main: sentimentData.document.sentiment,
-      scores: sentimentData.document.confidence,
-    }
+    const sentiment: Sentiment = sentimentData.document.confidence;
 
     await prisma.diary.create({
       data: {
@@ -55,10 +52,7 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   }
 
   const sentimentData = await analyzeSentiment(content);
-  const sentiment: Sentiment = {
-    main: sentimentData.document.sentiment,
-    scores: sentimentData.document.confidence,
-  }
+  const sentiment: Sentiment = sentimentData.document.confidence;
 
   await prisma.diary.update({
     where: {

@@ -4,7 +4,4 @@ export enum SentimentType {
   NEUTRAL = 'neutral',
 }
 
-export type Sentiment = {
-  main: SentimentType,
-  scores: Record<SentimentType, number>;
-};
+export type Sentiment = Record<SentimentType, number>;
