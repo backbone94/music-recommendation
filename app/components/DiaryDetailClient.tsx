@@ -3,23 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { deleteDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
 import { useQuery } from 'react-query';
 import { Sentiment } from '@/types/sentiment';
 import { recommendMusic } from '../actions/music';
 import { searchYouTube } from '../actions/youtube';
 import Image from 'next/image';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import BarChart from './BarChart';
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
@@ -47,36 +36,6 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     }
   );
 
-  const data = {
-    labels: ['긍정', '부정', '중립'],
-    datasets: [
-      {
-        label: '감정 비율 (%)',
-        data: [sentiment.positive || 0, sentiment.negative || 0, sentiment.neutral || 0],
-        backgroundColor: ['green', 'red', 'gray'],
-        borderColor: ['green', 'red', 'gray'],
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: '감정 분석 결과',
-      },
-    },
-    scales: {
-      y: {
-        max: 100,
-      },
-    },
-  };
-
   const handleDelete = async () => {
     try {
       await deleteDiary(diary.id);
@@ -98,11 +57,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       <button onClick={handleUpdate}>Update Diary</button>
       <button onClick={handleDelete}>Delete Diary</button>
 
-      {sentiment && (
-        <div style={{ width: '500px', height: '300px', marginTop: '20px' }}>
-          <Bar data={data} options={options} />
-        </div>
-      )}
+      {sentiment && <BarChart sentiment={sentiment} />}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
         {trackLoading ? (
