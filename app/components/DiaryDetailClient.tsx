@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { deleteDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
 import { useQuery } from 'react-query';
-import { SentimentScores } from '@/types/sentiment';
 import { recommendMusic } from '../actions/music';
 import { searchYouTube } from '../actions/youtube';
 import Image from 'next/image';
@@ -28,7 +27,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   );
 
   const { data: videoId, error: videoError, isLoading: videoLoading } = useQuery(
-    'youtube',
+    ['youtube', track],
     () => searchYouTube(track!.name, track!.artists),
     {
       enabled: !!track,
