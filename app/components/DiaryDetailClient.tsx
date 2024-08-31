@@ -19,10 +19,11 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   };
 
   const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
-    'track',
+    ['track', diary.id],
     () => recommendMusic({ positive, negative, neutral }),
     {
       enabled: !!diary,
+      staleTime: 1000 * 60 * 5,
     }
   );
 
