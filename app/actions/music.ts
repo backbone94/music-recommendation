@@ -65,19 +65,17 @@ export const recommendMusic = async (sentiment: Sentiment) => {
 };
 
 const getRecommendationParams = (sentiment: Sentiment) => {
-  let seedGenres = 'pop, rock, dance, electronic, indie, hip-hop';
+  let seedGenres = 'pop';
   let targetEnergy;
   let targetValence;
 
   if (sentiment.positive >= 50) {
-    targetEnergy = Math.min(1, sentiment.positive / 100 + 0.5);
-    targetValence = Math.min(1, sentiment.positive / 100 + 0.5);
+    targetEnergy = sentiment.positive / 100;
+    targetValence = sentiment.positive / 100;
   } else if (sentiment.negative >= 50) {
-    seedGenres = 'blues, classical, ambient, jazz';
-    targetEnergy = Math.max(0, 0.5 - sentiment.negative / 100);
-    targetValence = Math.max(0, 0.5 - sentiment.negative / 100);
+    targetEnergy = sentiment.negative / 100;
+    targetValence = sentiment.negative / 100;
   } else {
-    seedGenres = 'indie, alternative, folk, chill';
     targetEnergy = sentiment.neutral / 100;
     targetValence = sentiment.neutral / 100;
   }
