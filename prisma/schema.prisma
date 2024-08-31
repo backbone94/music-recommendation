@@ -24,5 +24,6 @@ model Diary {
   createdAt DateTime @default(now())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
-  sentiment   Json
+  sentimentScores   Json
+  mainSentiment String
 }

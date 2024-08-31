@@ -5,7 +5,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { analyzeSentiment } from './sentiment';
-import { Sentiment } from '@/types/sentiment';
 
 export async function writeDiary(title: string, content: string) {
   const session = await getServerSession(authOptions);
@@ -16,14 +15,14 @@ export async function writeDiary(title: string, content: string) {
 
   try {
     const sentimentData = await analyzeSentiment(content);
-    const sentiment: Sentiment = sentimentData.document.confidence;
 
     await prisma.diary.create({
       data: {
         title,
         content,
         userId: Number(session.user.id),
-        sentiment: JSON.stringify(sentiment),
+        mainSentiment: sentimentData.document.sentiment,
+        sentimentScores: sentimentData.document.confidence,
       },
     });
 
@@ -52,7 +51,6 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   }
 
   const sentimentData = await analyzeSentiment(content);
-  const sentiment: Sentiment = sentimentData.document.confidence;
 
   await prisma.diary.update({
     where: {
@@ -61,7 +59,9 @@ export async function updateDiary(diaryId: number, title: string, content: strin
     data: {
       title,
       content,
-      sentiment: JSON.stringify(sentiment),
+      userId: Number(session.user.id),
+      mainSentiment: sentimentData.document.sentiment,
+      sentimentScores: sentimentData.document.confidence,
     },
   });
 

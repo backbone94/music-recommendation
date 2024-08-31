@@ -10,17 +10,18 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Sentiment } from '@/types/sentiment';
+import { SentimentScores } from '@/types/sentiment';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarChart = ({ sentiment }: { sentiment: Sentiment }) => {
+const BarChart = ({ sentimentScores }: { sentimentScores: SentimentScores }) => {
+  const { positive, negative, neutral } = sentimentScores;
   const data = {
     labels: ['긍정', '부정', '중립'],
     datasets: [
       {
         label: '감정 비율 (%)',
-        data: [sentiment.positive || 0, sentiment.negative || 0, sentiment.neutral || 0],
+        data: [positive || 0, negative || 0, neutral || 0],
         backgroundColor: ['green', 'red', 'gray'],
         borderColor: ['green', 'red', 'gray'],
       },

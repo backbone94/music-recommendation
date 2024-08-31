@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { deleteDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
 import { useQuery } from 'react-query';
-import { Sentiment } from '@/types/sentiment';
+import { SentimentScores } from '@/types/sentiment';
 import { recommendMusic } from '../actions/music';
 import { searchYouTube } from '../actions/youtube';
 import Image from 'next/image';
@@ -12,7 +12,7 @@ import BarChart from './BarChart';
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
-  const sentiment: Sentiment = JSON.parse(diary.sentiment!.toString());
+  const sentimentScores: SentimentScores = JSON.parse(JSON.stringify(diary.sentimentScores));
 
   const extractVideoId = (url: string) => {
     const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
@@ -21,9 +21,9 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
 
   const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
     'track',
-    () => recommendMusic(sentiment),
+    () => recommendMusic(sentimentScores),
     {
-      enabled: !!sentiment,
+      enabled: !!sentimentScores,
     }
   );
 
@@ -57,7 +57,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       <button onClick={handleUpdate}>Update Diary</button>
       <button onClick={handleDelete}>Delete Diary</button>
 
-      {sentiment && <BarChart sentiment={sentiment} />}
+      {sentimentScores && <BarChart sentimentScores={sentimentScores} />}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
         {trackLoading ? (

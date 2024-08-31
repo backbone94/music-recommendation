@@ -1,6 +1,6 @@
 'use server';
 
-import { Sentiment } from '@/types/sentiment';
+import { SentimentScores } from '@/types/sentiment';
 import { Artist, Track, TrackClient } from '@/types/spotify';
 import axios from 'axios';
 
@@ -22,9 +22,9 @@ const getSpotifyAccessToken = async (clientId: string, clientSecret: string) => 
   tokenExpiresAt = Date.now() + response.data.expires_in * 1000;
 };
 
-export const recommendMusic = async (sentiment: Sentiment) => {
-  if (!sentiment) {
-    throw new Error('No sentiment provided');
+export const recommendMusic = async (sentimentScores: SentimentScores) => {
+  if (!sentimentScores) {
+    throw new Error('No sentimentScores provided');
   }
 
   const clientId = process.env.SPOTIFY_CLIENT_ID;
@@ -45,7 +45,7 @@ export const recommendMusic = async (sentiment: Sentiment) => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        params: getRecommendationParams(sentiment),
+        params: getRecommendationParams(sentimentScores),
       }
     );
 
@@ -64,20 +64,20 @@ export const recommendMusic = async (sentiment: Sentiment) => {
   }
 };
 
-const getRecommendationParams = (sentiment: Sentiment) => {
+const getRecommendationParams = (sentimentScores: SentimentScores) => {
   let seedGenres = 'pop';
   let targetEnergy;
   let targetValence;
 
-  if (sentiment.positive >= 50) {
-    targetEnergy = sentiment.positive / 100;
-    targetValence = sentiment.positive / 100;
-  } else if (sentiment.negative >= 50) {
-    targetEnergy = sentiment.negative / 100;
-    targetValence = sentiment.negative / 100;
+  if (sentimentScores.positive >= 50) {
+    targetEnergy = sentimentScores.positive / 100;
+    targetValence = sentimentScores.positive / 100;
+  } else if (sentimentScores.negative >= 50) {
+    targetEnergy = sentimentScores.negative / 100;
+    targetValence = sentimentScores.negative / 100;
   } else {
-    targetEnergy = sentiment.neutral / 100;
-    targetValence = sentiment.neutral / 100;
+    targetEnergy = sentimentScores.neutral / 100;
+    targetValence = sentimentScores.neutral / 100;
   }
 
   return {
