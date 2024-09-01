@@ -18,7 +18,7 @@ export const recommendMusic = async (diaryContent: string) => {
         messages: [
           {
             role: 'user',
-            content: `Based on the following diary content, suggest a popular and recent song title and artist from either South Korea or the United States. The diary content is: "${diaryContent}". Provide the response in the format: {"title": "song title", "artist": "artist name"}. Make sure the song is popular and was released recently.`,
+            content: `Based on the following diary content, suggest a popular song title and artist from the United States that was released after 2010. The diary content is: "${diaryContent}". Provide the response in the format: {"title": "song title", "artist": "artist name"}.`,
           },
         ],
         temperature: 1,
