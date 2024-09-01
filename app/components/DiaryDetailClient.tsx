@@ -4,10 +4,9 @@ import { useRouter } from 'next/navigation';
 import { deleteDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
 import { useQuery } from 'react-query';
-import { recommendMusic } from '../actions/music';
 import { searchYouTube } from '../actions/youtube';
-import Image from 'next/image';
 import BarChart from './BarChart';
+import { recommendMusic } from '../actions/music';
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
@@ -20,16 +19,16 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
 
   const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
     ['track', diary.id],
-    () => recommendMusic({ positive, negative, neutral }),
+    () => recommendMusic(diary.content),
     {
       enabled: !!diary,
-      staleTime: 1000 * 60 * 5,
+      staleTime: 1000 * 60 * 60,
     }
   );
 
   const { data: videoId, error: videoError, isLoading: videoLoading } = useQuery(
     ['youtube', track],
-    () => searchYouTube(track!.name, track!.artists),
+    () => searchYouTube(track!.title, track!.artist),
     {
       enabled: !!track,
       select: (videoUrl) => extractVideoId(videoUrl),
@@ -49,6 +48,14 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     router.push(`/diary/${diary.id}/edit`);
   };
 
+  if (trackError) {
+    return <div>Failed to load track.</div>;
+  }
+
+  if (trackLoading) {
+    return <div>track is loading...</div>;
+  }
+
   return (
     <div>
       <h1>{diary.title}</h1>
@@ -60,26 +67,6 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       <BarChart sentimentScores={{positive, negative, neutral}} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-        {trackLoading ? (
-            <div>Loading track...</div>
-          ) : trackError ? (
-            <div>Error occurred while fetching track data.</div>
-          ) : (
-            track && (
-              <div style={{ flex: 1, marginRight: '20px' }}>
-                <h2>Recommended Tracks</h2>
-                <Image src={track.albumImageUrl} width="320" height="320" alt="album" />
-                <ul>
-                  <li>
-                    <a href={track.url} target="_blank" rel="noopener noreferrer">
-                      {track.name} by {track.artists}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            )
-          )}
-
         {videoLoading ? (
           <div>Loading video...</div>
         ) : videoError ? (
