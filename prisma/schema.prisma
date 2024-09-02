@@ -29,3 +29,10 @@ model Diary {
   negative Float
   neutral Float
 }
+
+model Advice {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  advice    String
+  createdAt DateTime @default(now())
+}
