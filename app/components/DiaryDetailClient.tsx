@@ -66,26 +66,26 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
 
       <BarChart sentimentScores={{positive, negative, neutral}} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-        {videoLoading ? (
-          <div>Loading video...</div>
-        ) : videoError ? (
-          <div>Error occurred while fetching video data.</div>
-        ) : (
-          videoId && (
-            <div style={{ flex: 1 }}>
-              <h2>Related YouTube Video</h2>
-              <iframe
-                width="100%"
-                height="315"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          )
-        )}
-      </div>
+      <h4>{diary.advice}</h4><br/>
+
+      {videoLoading ? (
+        <div>Loading video...</div>
+      ) : videoError ? (
+        <div>Error occurred while fetching video data.</div>
+      ) : (
+        videoId && (
+          <div style={{ flex: 1 }}>
+            <h2>Related YouTube Video</h2>
+            <iframe
+              width="50%"
+              height="315"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )
+      )}
     </div>
   );
 }

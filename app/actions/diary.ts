@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { analyzeSentiment } from './sentiment';
+import { getAdvice } from './advice';
 
 export async function writeDiary(title: string, content: string) {
   const session = await getServerSession(authOptions);
@@ -17,6 +18,8 @@ export async function writeDiary(title: string, content: string) {
     const sentimentData = await analyzeSentiment(content);
     const { positive, negative, neutral } = sentimentData.document.confidence;
 
+    const advice = await getAdvice(content);
+
     await prisma.diary.create({
       data: {
         title,
@@ -26,6 +29,7 @@ export async function writeDiary(title: string, content: string) {
         positive,
         negative,
         neutral,
+        advice,
       },
     });
 
