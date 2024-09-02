@@ -31,9 +31,9 @@ model Diary {
   advice String  @db.Text
 }
 
-model Advice {
+model WeeklyAdvice {
   id        Int      @id @default(autoincrement())
   userId    Int
-  advice    String
+  advice    String  @db.Text
   createdAt DateTime @default(now())
 }

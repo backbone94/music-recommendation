@@ -1,6 +1,6 @@
 'use client'
 
-import { getDiariesByUserId } from '@/app/actions/diary';
+import { Diary } from '@prisma/client';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,7 +12,6 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { useQuery } from 'react-query';
 
 ChartJS.register(
   CategoryScale,
@@ -48,20 +47,7 @@ const formatDate = (date: Date): string => {
   }
 };
 
-const LineChart = () => {
-  const { data: diaries, error: diariesError, isLoading: diariesLoading } = useQuery(
-    'diaries',
-    () => getDiariesByUserId(),
-  );
-
-  if (diariesLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (diariesError) {
-    return <div>Error loading diaries.</div>;
-  }
-
+const LineChart = ({ diaries }: { diaries: Diary[] }) => {
   if (!diaries) {
     return <div>No diaries available</div>;
   }

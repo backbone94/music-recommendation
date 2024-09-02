@@ -1,26 +1,19 @@
-// /diary/history/page.tsx
-'use client';
-
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import LineChart from '@/app/components/LineChart';
+import { getDiaries } from '@/app/actions/diary';
+import { getWeeklyAnalysis } from '@/app/actions/advice';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const HistoryPage = async () => {
+  const diaries = await getDiaries(7);
+  const combinedContent = diaries.map(diary => diary.content).join('\n');
+  const analysis = await getWeeklyAnalysis(combinedContent);
 
-const HistoryPage = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div>
-        <h1>Diary History</h1>
-        <LineChart />
-      </div>
-    </QueryClientProvider>
+    <div>
+      <h1>Diary History</h1>
+      <LineChart diaries={diaries} />
+      <div>{analysis}</div>
+    </div>
   );
 };
 
