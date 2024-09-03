@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import LineChart from '@/app/components/LineChart';
 import { fetchDiaries } from '@/app/actions/diary';
-import { getWeeklyAnalysis } from '@/app/actions/advice';
+import { generateWeeklyAnalysis, getWeeklyAnalysis } from '@/app/actions/advice';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 import { Diary } from '@prisma/client';
@@ -15,12 +15,18 @@ const HistoryPage = () => {
   const [analysis, setAnalysis] = useState('');
   const [isDiariesLoading, setIsDiariesLoading] = useState(true);
   const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
+  const [showAnalysisButton, setShowAnalysisButton] = useState(true);
 
   useEffect(() => {
     const getDiaries = async () => {
       try {
         const diariesData = await fetchDiaries(7);
         setDiaries(diariesData);
+        const cachedAnalysis = await getWeeklyAnalysis();
+        if (cachedAnalysis) {
+          setAnalysis(cachedAnalysis);
+          setShowAnalysisButton(false);
+        }
       } catch (error) {
         console.error('Failed to fetch diaries data:', error);
       } finally {
@@ -31,24 +37,21 @@ const HistoryPage = () => {
     getDiaries();
   }, []);
 
-  useEffect(() => {
-    const fetchAnalysis = async () => {
-      if (diaries.length === 0) return;
+  const handleFetchAnalysis = async () => {
+    if (diaries.length === 0) return;
 
-      try {
-        setIsAnalysisLoading(true);
-        const combinedContent = diaries.map(diary => diary.content).join('\n');
-        const analysisData = await getWeeklyAnalysis(combinedContent);
-        setAnalysis(analysisData);
-      } catch (error) {
-        console.error('Failed to fetch analysis data:', error);
-      } finally {
-        setIsAnalysisLoading(false);
-      }
-    };
-
-    fetchAnalysis();
-  }, [diaries]);
+    try {
+      setIsAnalysisLoading(true);
+      setShowAnalysisButton(false);
+      const combinedContent = diaries.map((diary) => diary.content).join('\n');
+      const analysis = await generateWeeklyAnalysis(combinedContent);
+      setAnalysis(analysis);
+    } catch (error) {
+      console.error('Failed to fetch analysis data:', error);
+    } finally {
+      setIsAnalysisLoading(false);
+    }
+  };
 
   if (isDiariesLoading) {
     return <LoadingSpinner />;
@@ -63,12 +66,23 @@ const HistoryPage = () => {
         ←
       </button>
       <LineChart diaries={diaries} />
-      {isAnalysisLoading ? (
+      {!analysis && showAnalysisButton && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={handleFetchAnalysis}
+            className="px-6 py-3 mt-6 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-full shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105"
+          >
+            히스토리 분석
+          </button>
+        </div>
+      )}
+      {isAnalysisLoading && !analysis && (
         <div className="mt-8 mb-4 text-center text-gray-600">
           <p className="text-lg font-semibold mb-4">최근 일기를 분석하고 있어요! 잠시만 기다려 주세요 😊</p>
           <SkeletonLoading />
         </div>
-      ) : (
+      )}
+      {analysis && (
         <div className="p-4 mt-4 bg-white rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mt-4 mb-4 text-gray-700">💌 최근 일기에서 느껴진 감정들을 모아봤어요!</h2>
           <p className="text-gray-700 leading-relaxed">

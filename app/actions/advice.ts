@@ -38,7 +38,7 @@ export const getAdvice = async (content: string) => {
   return cleanedAdvice;
 }
 
-export const getWeeklyAnalysis = async (contents: string) => {
+export const getWeeklyAnalysis = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -59,23 +59,18 @@ export const getWeeklyAnalysis = async (contents: string) => {
     },
   });
 
-  if (existingAdvice) {
-    return existingAdvice.advice;
-  }
-
-  const newAdvice = await generateWeeklyAnalysis(contents);
-
-  await prisma.weeklyAdvice.create({
-    data: {
-      userId,
-      advice: newAdvice,
-    },
-  });
-
-  return newAdvice;
+  return existingAdvice?.advice;
 }
 
 export const generateWeeklyAnalysis = async (contents: string) => {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    throw new Error('Not authenticated');
+  }
+
+  const userId = session.user.id;
+
   try {
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
@@ -98,6 +93,13 @@ export const generateWeeklyAnalysis = async (contents: string) => {
     );
 
     const analysis = response.data.choices[0].message.content.trim() as string;
+
+    await prisma.weeklyAdvice.create({
+      data: {
+        userId,
+        advice: analysis,
+      },
+    });
 
     return analysis;
   } catch (error) {

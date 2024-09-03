@@ -11,8 +11,13 @@ const DiaryList = () => {
   const router = useRouter();
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(false);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSkeleton(true);
+    }, 300);
+
     const getDiaries = async () => {
       try {
         const data = await fetchDiaries();
@@ -20,11 +25,14 @@ const DiaryList = () => {
       } catch (error) {
         console.error('Failed to fetch diaries:', error);
       } finally {
+        clearTimeout(timer);
         setIsLoading(false);
       }
     };
 
     getDiaries();
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -44,8 +52,8 @@ const DiaryList = () => {
           감정 히스토리
         </button>
       </div>
-      {isLoading ? (
-        <SkeletonLoading isDiaryList={true}/>
+      {isLoading && showSkeleton ? (
+        <SkeletonLoading isDiaryList={true} />
       ) : (
         <ul className="space-y-4">
           {diaries.map((diary) => (
