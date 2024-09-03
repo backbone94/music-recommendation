@@ -1,12 +1,15 @@
-const SkeletonLoading = () => {
+const SkeletonLoading = ({ isDiaryList = false }: { isDiaryList?: boolean }) => {
   return (
     <div className="space-y-4" style={{ animation: 'pulse 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>
-      <div className="h-6 bg-gray-300 rounded"></div>
-      <div className="h-6 bg-gray-300 rounded"></div>
-      <div className="h-6 bg-gray-300 rounded"></div>
-      <div className="h-6 bg-gray-300 rounded"></div>
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div
+          key={index}
+          className={`bg-gray-300 rounded ${isDiaryList ? '' : 'h-6'}`}
+          style={isDiaryList ? { height: '92px' } : {}}
+        ></div>
+      ))}
     </div>
   );
-}
+};
 
 export default SkeletonLoading;

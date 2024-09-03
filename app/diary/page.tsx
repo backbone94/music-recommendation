@@ -45,7 +45,7 @@ const DiaryList = () => {
         </button>
       </div>
       {isLoading ? (
-        <SkeletonLoading />
+        <SkeletonLoading isDiaryList={true}/>
       ) : (
         <ul className="space-y-4">
           {diaries.map((diary) => (
