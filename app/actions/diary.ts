@@ -100,7 +100,7 @@ export async function fetchDiaries(days?: number) {
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     });
 
