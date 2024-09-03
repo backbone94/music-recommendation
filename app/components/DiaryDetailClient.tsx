@@ -9,6 +9,7 @@ import { searchYouTube } from '../actions/youtube';
 import BarChart from './BarChart';
 import { recommendMusic } from '../actions/music';
 import LoadingSpinner from './LoadingSpinner';
+import { formatDate } from '@/lib/date';
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
@@ -70,7 +71,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       <h1 className="text-3xl font-bold text-gray-900 mb-8">{diary.title}</h1>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-gray-500">
-          <em>{new Date(diary.createdAt).toLocaleDateString()}</em>
+          <em>{formatDate(new Date(diary.createdAt))}</em>
         </p>
         <div className="flex space-x-2">
           <button
