@@ -9,20 +9,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>
-        <header>
-          <Link href="/">
+      <body className="flex flex-col bg-gray-100 h-screen">
+        <header className="p-4">
+          <Link href="/" className="inline-block">
             <Image
               src="/favicon.ico"
               alt="Home"
               width={50}
               height={50}
-              style={{ cursor: 'pointer' }}
+              className="cursor-pointer rounded-full hover:opacity-80"
               priority={true}
             />
           </Link>
         </header>
-        {children}
+        <div className="flex-grow px-4 py-8">
+          {children}
+        </div>
       </body>
     </html>
   );

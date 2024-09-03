@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import DiaryDetailClientWrapper from '@/app/components/DiaryDetailClientWrapper';
-
-const prisma = new PrismaClient();
 
 export default async function DiaryDetailPage({ params }: { params: { id: string } }) {
   const diary = await prisma.diary.findUnique({

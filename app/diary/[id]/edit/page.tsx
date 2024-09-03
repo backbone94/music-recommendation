@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import DiaryEditPage from '@/app/components/DiaryEditPage';
-
-const prisma = new PrismaClient();
 
 export default async function DiaryEditPageWrapper({ params }: { params: { id: string } }) {
   const diary = await prisma.diary.findUnique({

@@ -79,7 +79,7 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   revalidatePath(`/diary/${diaryId}`);
 }
 
-export async function getDiaries(days?: number) {
+export async function fetchDiaries(days?: number) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {

@@ -17,7 +17,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const BarChart = ({ sentimentScores }: { sentimentScores: SentimentScores }) => {
   const { positive, negative, neutral } = sentimentScores;
   const data = {
-    labels: ['긍정', '부정', '중립'],
+    labels: ['🌈', '🌧️', '😐'],
     datasets: [
       {
         label: '감정 비율 (%)',
@@ -30,24 +30,55 @@ const BarChart = ({ sentimentScores }: { sentimentScores: SentimentScores }) => 
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          font: {
+            size: 14,
+          },
+          color: 'dimgray',
+        },
       },
       title: {
         display: true,
-        text: '감정 분석 결과',
+        text: '감정 분석',
+        font: {
+          size: 18,
+        },
+        color: 'darkslategray',
       },
     },
     scales: {
       y: {
         max: 100,
+        ticks: {
+          font: {
+            size: 12,
+          },
+          color: 'dimgray',
+          callback: (value: number | string) => value === 0 || value === 50 || value === 100 ? value : null,
+        },
+        grid: {
+          display: false,
+        },
+      },
+      x: {
+        ticks: {
+          font: {
+            size: 18,
+          },
+        },
+        grid: {
+          display: false,
+        },
       },
     },
   };
 
   return (
-    <div style={{ width: '500px', height: '300px', marginTop: '20px' }}>
+    <div className="h-80 max-w-xl mx-auto mt-8 p-4 rounded-lg shadow-2xl">
       <Bar data={data} options={options} />
     </div>
   );
