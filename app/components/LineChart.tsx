@@ -32,11 +32,11 @@ const LineChart = ({ diaries }: { diaries: Diary[] }) => {
   const getEmojiForScore = (score: number) => {
     switch (score) {
       case 100:
-        return '🎉';
+        return '100';
       case 0:
         return '0';
       case -100:
-        return '🌧️';
+        return '-100';
       default:
         return '';
     }
@@ -78,7 +78,7 @@ const LineChart = ({ diaries }: { diaries: Diary[] }) => {
 
   return (
     <div className="max-w-full h-100 mx-auto p-4 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">감정 히스토리</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800 select-none">감정 히스토리</h1>
       <div className="h-full w-full">
         <Line data={data} options={options} />
       </div>

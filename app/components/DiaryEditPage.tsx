@@ -22,7 +22,7 @@ export default function DiaryEditPage({ diary }: { diary: Diary }) {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded shadow-md">
+    <div className="max-w-lg mx-auto p-6 bg-white rounded shadow-md select-none">
       <button
         onClick={() => router.push(`/diary/${diary.id}`)}
         className="text-xl mb-4 hover:bg-gray-300 transition duration-200 rounded-full w-10 h-10 flex items-center justify-center"

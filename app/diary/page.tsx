@@ -36,7 +36,7 @@ const DiaryList = () => {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-6 select-none">
       <h1 className="text-3xl font-bold mb-6">일기 목록</h1>
       <div className="flex space-x-4 mb-6">
         <button
@@ -62,8 +62,8 @@ const DiaryList = () => {
               className="text-pink-500 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-200"
             >
               <Link href={`/diary/${diary.id}`} className="rounded-lg block bg-white p-4">
-                <h2 className="text-xl font-semibold select-none">{diary.title}</h2>
-                <p className="text-gray-400 mt-2 truncate select-none">{diary.content}</p>
+                <h2 className="text-xl font-semibold">{diary.title}</h2>
+                <p className="text-gray-400 mt-2 truncate">{diary.content}</p>
               </Link>
             </li>
           ))}

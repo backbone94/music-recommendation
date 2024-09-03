@@ -62,7 +62,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   }
 
   return (
-    <div className="bg-white max-w-2xl mx-auto p-6 rounded-xl shadow-lg">
+    <div className="bg-white max-w-2xl mx-auto p-6 rounded-xl shadow-lg select-none">
       <button
         onClick={() => router.push('/diary')}
         className="text-xl mb-4 hover:bg-gray-300 transition duration-200 rounded-full w-10 h-10 flex items-center justify-center"
@@ -90,13 +90,13 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
       </div>
 
       <div className="bg-sky-50 border border-sky-200 rounded-lg p-4 mb-6">
-        <p className="text-gray-800">{diary.content}</p>
+        <p className="text-gray-800 select-text">{diary.content}</p>
       </div>
 
       <BarChart sentimentScores={{ positive, negative, neutral }} />
 
       <div className="bg-green-50 border border-green-200 p-4 mt-6 rounded-lg shadow-sm">
-        <h4 className="text-md font-semibold text-gray-900">{diary.advice}</h4>
+        <h4 className="text-md font-semibold text-gray-900 select-text">{diary.advice}</h4>
       </div>
 
       <div className="mt-8">

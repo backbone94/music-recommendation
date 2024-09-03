@@ -17,7 +17,7 @@ export default function RootLayout({
               alt="Home"
               width={50}
               height={50}
-              className="cursor-pointer rounded-full hover:opacity-80"
+              className="cursor-pointer rounded-full hover:opacity-80 select-none"
               priority={true}
             />
           </Link>

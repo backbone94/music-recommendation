@@ -58,7 +58,7 @@ const HistoryPage = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 bg-gray-50 rounded-lg shadow-lg">
+    <div className="max-w-2xl mx-auto p-4 bg-gray-50 rounded-lg shadow-lg select-none">
       <button
         onClick={() => router.push('/diary')}
         className="mb-4 hover:bg-gray-300 text-gray-600 transition duration-200 rounded-full w-10 h-10 flex items-center justify-center"
@@ -87,7 +87,7 @@ const HistoryPage = () => {
           <h2 className="text-xl font-semibold mt-4 mb-4 text-gray-700">💌 최근 일기에서 느껴진 감정들을 모아봤어요!</h2>
           <p className="text-gray-700 leading-relaxed">
             {analysis.split('\n').map((line, index) => (
-              <span key={index} className="block mb-2">
+              <span key={index} className="block mb-2 select-text">
                 {line}
               </span>
             ))}

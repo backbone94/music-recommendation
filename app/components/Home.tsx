@@ -36,7 +36,7 @@ const Home = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start">
+    <div className="flex flex-col items-center justify-start select-none">
       <h1 className="text-2xl font-bold mt-10 mb-6">
         {session ? `${session.user?.name}님, 환영합니다!` : '환영합니다!'}
       </h1>
