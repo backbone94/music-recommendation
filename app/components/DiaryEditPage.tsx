@@ -50,7 +50,7 @@ export default function DiaryEditPage({ diary }: { diary: Diary }) {
             onChange={(e) => setContent(e.target.value)}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
-            rows={5}
+            rows={10}
           ></textarea>
         </div>
         <button
