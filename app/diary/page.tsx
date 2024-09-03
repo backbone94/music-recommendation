@@ -4,14 +4,17 @@ import { Diary } from '@prisma/client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { fetchDiaries } from '@/app/actions/diary';
+import { fetchDiaries, deleteDiary } from '@/app/actions/diary';
 import SkeletonLoading from '../components/SkeletonLoading';
+import ConfirmModal from '../components/ConfirmModal';
 
 const DiaryList = () => {
   const router = useRouter();
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDiaryId, setSelectedDiaryId] = useState<number | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,6 +37,27 @@ const DiaryList = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const openModal = (id: number) => {
+    setSelectedDiaryId(id);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedDiaryId(null);
+  };
+
+  const handleDeleteDiary = async () => {
+    if (selectedDiaryId === null) return;
+    try {
+      await deleteDiary(selectedDiaryId);
+      setDiaries(diaries.filter((diary) => diary.id !== selectedDiaryId));
+      closeModal();
+    } catch (error) {
+      console.error('Failed to delete diary:', error);
+    }
+  };
 
   return (
     <div className="p-6 select-none">
@@ -59,16 +83,29 @@ const DiaryList = () => {
           {diaries.map((diary) => (
             <li
               key={diary.id}
-              className="text-pink-500 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-200"
+              className="relative text-pink-500 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-200"
             >
-              <Link href={`/diary/${diary.id}`} className="rounded-lg block bg-white p-4">
+              <Link href={`/diary/${diary.id}`} className="rounded-lg block bg-white p-4 pr-12">
                 <h2 className="text-xl font-semibold">{diary.title}</h2>
                 <p className="text-gray-400 mt-2 truncate">{diary.content}</p>
               </Link>
+              <button
+                onClick={() => openModal(diary.id)}
+                className="absolute top-4 right-4"
+                aria-label="Delete diary"
+              >
+                🗑️
+              </button>
             </li>
           ))}
         </ul>
       )}
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={handleDeleteDiary}
+      />
     </div>
   );
 }
