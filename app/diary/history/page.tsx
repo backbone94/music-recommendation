@@ -78,7 +78,7 @@ const HistoryPage = () => {
       )}
       {isAnalysisLoading && !analysis && (
         <div className="mt-8 mb-4 text-center text-gray-600">
-          <p className="text-lg font-semibold mb-4">최근 일기를 분석하고 있어요! 잠시만 기다려 주세요 😊</p>
+          <p className="text-lg font-semibold mb-4">최근 일기를 분석하고 있어요! 잠시만 기다려 주세요 😊 (약 1분 소요)</p>
           <SkeletonLoading />
         </div>
       )}
