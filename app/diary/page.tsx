@@ -83,7 +83,7 @@ const DiaryList = () => {
           {diaries.map((diary) => (
             <li
               key={diary.id}
-              className="relative text-pink-500 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-200"
+              className="relative text-black rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-200"
             >
               <Link href={`/diary/${diary.id}`} className="rounded-lg block bg-white p-4 pr-12">
                 <h2 className="text-xl font-semibold">{diary.title}</h2>
