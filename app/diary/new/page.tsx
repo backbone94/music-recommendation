@@ -3,20 +3,25 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { writeDiary } from '@/app/actions/diary';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 const NewDiaryEntry = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
 
     try {
       await writeDiary(title, content);
       router.push('/diary');
     } catch (error) {
       console.error('Failed to save the diary entry:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,11 +60,13 @@ const NewDiaryEntry = () => {
         </div>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+          className={`px-4 py-2 rounded transition duration-200 ${isLoading ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+          disabled={isLoading}
         >
           저장하기
         </button>
       </form>
+      {isLoading && <LoadingSpinner />}
     </div>
   );
 };

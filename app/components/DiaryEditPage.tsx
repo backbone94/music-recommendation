@@ -4,20 +4,25 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { updateDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 export default function DiaryEditPage({ diary }: { diary: Diary }) {
   const router = useRouter();
   const [title, setTitle] = useState(diary.title);
   const [content, setContent] = useState(diary.content);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
 
     try {
       await updateDiary(diary.id, title, content);
       router.push(`/diary/${diary.id}`);
     } catch (error) {
       console.error('Failed to update the diary:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,11 +60,13 @@ export default function DiaryEditPage({ diary }: { diary: Diary }) {
         </div>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+          className={`px-4 py-2 rounded transition duration-200 ${isLoading ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+          disabled={isLoading}
         >
           저장하기
         </button>
       </form>
+      {isLoading && <LoadingSpinner />}
     </div>
   );
 }
