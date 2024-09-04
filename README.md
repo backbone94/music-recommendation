@@ -2,6 +2,10 @@
 
 음악 추천 웹 애플리케이션은 사용자의 감정과 선호도에 맞는 음악을 추천하는 웹 애플리케이션입니다. Next.js를 기반으로 개발되었으며, 사용자는 자신의 일기를 작성하거나 감정을 기록하면 그에 맞는 음악을 추천받을 수 있습니다.
 
+애플리케이션은 Vercel을 통해 배포되었으며, 다음 URL에서 확인할 수 있습니다:
+
+**[music-recommendation-pi.vercel.app](https://music-recommendation-pi.vercel.app)**
+
 ## 🛠️ 기술 스택 (Tech Stack)
 
 ### 프론트엔드 (Front-End)
