@@ -2,7 +2,7 @@
 
 음악 추천 웹 애플리케이션은 사용자의 감정과 선호도에 맞는 음악을 추천하는 웹 애플리케이션입니다. Next.js를 기반으로 개발되었으며, 사용자는 자신의 일기를 작성하거나 감정을 기록하면 그에 맞는 음악을 추천받을 수 있습니다.
 
-## 🛠️ 기술 스택
+## 🛠️ 기술 스택 (Tech Stack)
 
 ### 프론트엔드 (Front-End)
 ![React](https://img.shields.io/badge/React-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
@@ -15,13 +15,21 @@
 ![Prisma](https://img.shields.io/badge/Prisma-%232D3748.svg?style=for-the-badge&logo=prisma&logoColor=white)
 ![NextAuth.js](https://img.shields.io/badge/NextAuth.js-%2320232A.svg?style=for-the-badge&logo=next.js&logoColor=white)
 
-### 데이터베이스
+### 데이터베이스 (Database)
 ![MySQL](https://img.shields.io/badge/MySQL-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
 
-### 배포
+### 배포 (Deployment)
 ![Vercel](https://img.shields.io/badge/Vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
 
-## 📥 설치 및 실행
+### 외부 API (External APIs)
+![OpenAI](https://img.shields.io/badge/OpenAI-%23121011.svg?style=for-the-badge&logo=openai&logoColor=white)
+![Naver CLOVA](https://img.shields.io/badge/Naver_CLOVA-%2300C73C.svg?style=for-the-badge&logo=naver&logoColor=white)
+![Kakao](https://img.shields.io/badge/Kakao-%23FFCD00.svg?style=for-the-badge&logo=kakao&logoColor=black)
+![Google](https://img.shields.io/badge/Google-%234285F4.svg?style=for-the-badge&logo=google&logoColor=white)
+![Spotify](https://img.shields.io/badge/Spotify-%231DB954.svg?style=for-the-badge&logo=spotify&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-%23181717.svg?style=for-the-badge&logo=github&logoColor=white)
+
+## 📥 설치 및 실행 (Installation & Setup)
 
 1. 클론
 ```bash
@@ -38,7 +46,7 @@ npm run dev
 ```
 브라우저에서 http://localhost:3000으로 접속하여 애플리케이션을 확인할 수 있습니다.
 
-## 🔧 환경 변수 설정
+## 🔧 환경 변수 설정 (Environment Variables)
 환경 변수를 설정하기 위해 루트 디렉터리에 .env 파일을 생성하고, 다음과 같은 변수를 설정합니다:
 
 ```env
@@ -75,16 +83,16 @@ OPEN_AI_SECRET="your-openai-secret"
 
 ## ✨ 주요 기능 (Key Features)
 
-### 사용자 인증
+### 사용자 인증 (User Authentication)
 GitHub 및 Kakao 소셜 로그인 기능을 통해 사용자가 쉽게 로그인하고 자신의 데이터를 관리할 수 있습니다.
-### 음악 추천
+### 음악 추천 (Music Recommendation)
 감정과 연관된 음악을 추천하며, 유튜브 영상을 통해 음악을 바로 감상할 수 있습니다.
-### 감정 분석
+### 감정 분석 (Sentiment Analysis)
 사용자가 작성한 일기나 텍스트에서 감정을 분석하고, 그에 맞는 음악을 추천합니다.
-### 일기 작성
+### 일기 작성 (Diary Entry)
 사용자는 자신의 일기를 작성하고, 저장된 일기를 분석하여 음악을 추천받을 수 있습니다.
 
-## 📁 폴더 구조
+## 📁 폴더 구조 (Folder Structure)
 ```bash
 📦 음악 추천 웹 애플리케이션
  ┣ 📂app                   # 주요 애플리케이션 코드
@@ -101,7 +109,7 @@ GitHub 및 Kakao 소셜 로그인 기능을 통해 사용자가 쉽게 로그인
  ┗ 📜README.md             # 이 파일
  ```
 
-## 📚 사용법
+## 📚 사용법 (Usage)
 
 ### 회원 가입 및 로그인
 GitHub 또는 Kakao 계정을 사용하여 애플리케이션에 로그인합니다.
