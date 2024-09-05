@@ -30,8 +30,8 @@
 ![OpenAI](https://img.shields.io/badge/OpenAI-%23121011.svg?style=for-the-badge&logo=openai&logoColor=white)
 ![Naver CLOVA](https://img.shields.io/badge/Naver_CLOVA-%2300C73C.svg?style=for-the-badge&logo=naver&logoColor=white)
 ![Kakao](https://img.shields.io/badge/Kakao-%23FFCD00.svg?style=for-the-badge&logo=kakao&logoColor=black)
-![Google](https://img.shields.io/badge/Google-%234285F4.svg?style=for-the-badge&logo=google&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-%23181717.svg?style=for-the-badge&logo=github&logoColor=white)
+![YouTube Data API](https://img.shields.io/badge/YouTube%20Data%20API-red?logo=youtube&logoColor=white&style=flat-square)
 
 ## 📥 설치 및 실행 (Installation & Setup)
 
@@ -76,10 +76,6 @@ NAVER_CLIENT_SECRET="your-naver-client-secret"
 # Google Cloud Platform
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
-
-# Spotify
-SPOTIFY_CLIENT_ID="your-spotify-client-id"
-SPOTIFY_CLIENT_SECRET="your-spotify-client-secret"
 
 # OpenAI
 OPEN_AI_SECRET="your-openai-secret"
