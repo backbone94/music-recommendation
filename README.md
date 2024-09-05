@@ -31,7 +31,7 @@
 ![Naver CLOVA](https://img.shields.io/badge/Naver_CLOVA-%2300C73C.svg?style=for-the-badge&logo=naver&logoColor=white)
 ![Kakao](https://img.shields.io/badge/Kakao-%23FFCD00.svg?style=for-the-badge&logo=kakao&logoColor=black)
 ![GitHub](https://img.shields.io/badge/GitHub-%23181717.svg?style=for-the-badge&logo=github&logoColor=white)
-![YouTube Data API](https://img.shields.io/badge/YouTube%20Data%20API-red?logo=youtube&logoColor=white&style=flat-square)
+![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=youtube&logoColor=white)
 
 ## 📥 설치 및 실행 (Installation & Setup)
 
