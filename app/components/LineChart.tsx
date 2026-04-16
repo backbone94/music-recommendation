@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react';
 import { formatDate } from '@/lib/date';
 import { Diary } from '@prisma/client';
 import {
@@ -24,23 +25,23 @@ ChartJS.register(
   Legend
 );
 
+const getEmojiForScore = (score: number) => {
+  switch (score) {
+    case 100:
+      return '100';
+    case 0:
+      return '0';
+    case -100:
+      return '-100';
+    default:
+      return '';
+  }
+};
+
 const LineChart = ({ diaries }: { diaries: Diary[] }) => {
   if (!diaries) {
     return <div className="text-center text-gray-500">No diaries available</div>;
   }
-
-  const getEmojiForScore = (score: number) => {
-    switch (score) {
-      case 100:
-        return '100';
-      case 0:
-        return '0';
-      case -100:
-        return '-100';
-      default:
-        return '';
-    }
-  };
 
   const data = {
     labels: diaries.map((diary) => formatDate(diary.createdAt)),
@@ -86,4 +87,4 @@ const LineChart = ({ diaries }: { diaries: Diary[] }) => {
   );
 };
 
-export default LineChart;
+export default React.memo(LineChart);

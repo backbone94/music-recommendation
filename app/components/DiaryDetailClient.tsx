@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { deleteDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
 import { useQuery } from 'react-query';
@@ -16,6 +16,13 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
   const { positive, negative, neutral } = diary;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // showDeleteModal 등 state 변화로 리렌더될 때 새 객체가 생성되지 않도록 메모이제이션
+  // React.memo로 감싼 BarChart가 sentimentScores 참조 동일성을 확인해 리렌더를 건너뜀
+  const sentimentScores = useMemo(
+    () => ({ positive, negative, neutral }),
+    [positive, negative, neutral]
+  );
 
   const extractVideoId = (url: string) => {
     const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
@@ -94,7 +101,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
         <p className="text-gray-800 select-text">{diary.content}</p>
       </div>
 
-      <BarChart sentimentScores={{ positive, negative, neutral }} />
+      <BarChart sentimentScores={sentimentScores} />
 
       <div className="bg-green-50 border border-green-200 p-4 mt-6 rounded-lg shadow-sm">
         <h4 className="text-md font-semibold text-gray-900 select-text">{diary.advice}</h4>

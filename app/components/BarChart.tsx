@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -16,6 +17,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const BarChart = ({ sentimentScores }: { sentimentScores: SentimentScores }) => {
   const { positive, negative, neutral } = sentimentScores;
+
   const data = {
     labels: ['🌈', '🌧️', '😐'],
     datasets: [
@@ -84,4 +86,4 @@ const BarChart = ({ sentimentScores }: { sentimentScores: SentimentScores }) => 
   );
 }
 
-export default BarChart;
+export default React.memo(BarChart);

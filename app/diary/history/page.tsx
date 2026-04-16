@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import LineChart from '@/app/components/LineChart';
 import { fetchDiaries } from '@/app/actions/diary';
 import { generateWeeklyAnalysis, getWeeklyAnalysis } from '@/app/actions/advice';
@@ -37,13 +37,19 @@ const HistoryPage = () => {
     getDiaries();
   }, []);
 
+  // diaries가 바뀔 때만 재계산 — isAnalysisLoading 등 state 변화로 리렌더될 때
+  // diaries.map().join() 연산이 불필요하게 재실행되는 것을 방지
+  const combinedContent = useMemo(
+    () => diaries.map((diary) => diary.content).join('\n'),
+    [diaries]
+  );
+
   const handleFetchAnalysis = async () => {
     if (diaries.length === 0) return;
 
     try {
       setIsAnalysisLoading(true);
       setShowAnalysisButton(false);
-      const combinedContent = diaries.map((diary) => diary.content).join('\n');
       const analysis = await generateWeeklyAnalysis(combinedContent);
       setAnalysis(analysis);
     } catch (error) {
@@ -87,9 +93,7 @@ const HistoryPage = () => {
           <h2 className="text-xl font-semibold mt-4 mb-4 text-gray-700">💌 최근 일기에서 느껴진 감정들을 모아봤어요!</h2>
           <p className="text-gray-700 leading-relaxed">
             {analysis.split('\n').map((line, index) => (
-              <span key={index} className="block mb-2 select-text">
-                {line}
-              </span>
+              <span key={index} className="block mb-2 select-text">{line}</span>
             ))}
           </p>
         </div>
