@@ -38,30 +38,6 @@ export const getAdvice = async (content: string) => {
   return cleanedAdvice;
 }
 
-export const getWeeklyAnalysis = async () => {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user) {
-    throw new Error('Not authenticated');
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const userId = session.user.id;
-
-  const existingAdvice = await prisma.weeklyAdvice.findFirst({
-    where: {
-      userId,
-      createdAt: {
-        gte: today,
-      },
-    },
-  });
-
-  return existingAdvice?.advice;
-}
-
 export const generateWeeklyAnalysis = async (contents: string) => {
   const session = await getServerSession(authOptions);
 

@@ -6,7 +6,9 @@ import { deleteDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
 import { useQuery } from 'react-query';
 import { searchYouTube } from '../actions/youtube';
-import BarChart from './BarChart';
+import dynamic from 'next/dynamic';
+
+const BarChart = dynamic(() => import('./BarChart'), { ssr: false });
 import { recommendMusic } from '../actions/music';
 import LoadingSpinner from './LoadingSpinner';
 import { formatDate } from '@/lib/date';

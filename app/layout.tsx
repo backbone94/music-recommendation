@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import '../styles/globals.css';
+
+export const metadata: Metadata = {
+  title: '감정 일기',
+  description: '일기를 쓰고 감정을 분석하며 나에게 맞는 음악을 추천받아보세요.',
+};
 
 export default function RootLayout({
   children,

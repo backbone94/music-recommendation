@@ -6,7 +6,6 @@ import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { analyzeSentiment } from './sentiment';
 import { getAdvice } from './advice';
-import { Diary } from '@prisma/client';
 
 export async function writeDiary(title: string, content: string) {
   const session = await getServerSession(authOptions);
@@ -77,38 +76,6 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   });
 
   revalidatePath(`/diary/${diaryId}`);
-}
-
-export async function fetchDiaries(days?: number) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user) {
-    throw new Error('Not authenticated');
-  }
-
-  const fromDate = days ? new Date() : undefined;
-  if (fromDate && days) {
-    fromDate.setDate(fromDate.getDate() - days);
-  }
-
-  try {
-    const diaries: Diary[] = await prisma.diary.findMany({
-      where: {
-        userId: session.user.id,
-        createdAt: {
-          gte: fromDate,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return diaries;
-  } catch (error) {
-    console.error('Error fetching diaries:', error);
-    throw new Error('Failed to fetch diaries');
-  }
 }
 
 export async function deleteDiary(diaryId: number) {
