@@ -7,12 +7,22 @@ import { Diary } from '@prisma/client';
 import { useQuery } from 'react-query';
 import { searchYouTube } from '../actions/youtube';
 import dynamic from 'next/dynamic';
-
-const BarChart = dynamic(() => import('./BarChart'), { ssr: false });
 import { recommendMusic } from '../actions/music';
 import LoadingSpinner from './LoadingSpinner';
 import { formatDate } from '@/lib/date';
 import ConfirmModal from './ConfirmModal';
+
+const BarChart = dynamic(() => import('./BarChart'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-80 max-w-xl mx-auto mt-8 p-4 rounded-lg shadow-2xl animate-pulse bg-gray-100" />
+  ),
+});
+
+const extractVideoId = (url: string) => {
+  const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
+  return videoIdMatch ? videoIdMatch[1] : null;
+};
 
 const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const router = useRouter();
@@ -26,18 +36,10 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
     [positive, negative, neutral]
   );
 
-  const extractVideoId = (url: string) => {
-    const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
-    return videoIdMatch ? videoIdMatch[1] : null;
-  };
-
   const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
     ['track', diary.id],
     () => recommendMusic(diary.content),
-    {
-      enabled: !!diary,
-      staleTime: 1000 * 60 * 60,
-    }
+    { staleTime: 1000 * 60 * 60 }
   );
 
   const { data: videoId, error: videoError, isLoading: videoLoading } = useQuery(
@@ -62,14 +64,6 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
   const handleUpdate = () => {
     router.push(`/diary/${diary.id}/edit`);
   };
-
-  if (trackError) {
-    return <div className="text-red-500">Failed to load track.</div>;
-  }
-
-  if (trackLoading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <div className="bg-white max-w-2xl mx-auto p-6 rounded-xl shadow-lg select-none">
@@ -113,7 +107,9 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
         <h2 className="text-xl font-bold mb-4 text-gray-900 border-b-2 border-gray-300 pb-2">
           🎵 이 일기에 딱 맞는 노래를 추천해 드려요!
         </h2>
-        {videoLoading ? (
+        {trackError ? (
+          <div className="text-red-500 mt-4">Failed to load track.</div>
+        ) : trackLoading || videoLoading ? (
           <LoadingSpinner />
         ) : videoError ? (
           <div className="text-red-500 mt-4">Error occurred while fetching video data.</div>

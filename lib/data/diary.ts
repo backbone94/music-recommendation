@@ -1,7 +1,16 @@
+import { unstable_cache } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { Diary } from '@prisma/client';
+
+export const getDiary = unstable_cache(
+  async (id: number): Promise<Diary | null> => {
+    return prisma.diary.findUnique({ where: { id } });
+  },
+  ['diary-detail'],
+  { tags: ['diary'], revalidate: 3600 }
+);
 
 export async function getDiaries(days?: number): Promise<Diary[]> {
   const session = await getServerSession(authOptions);

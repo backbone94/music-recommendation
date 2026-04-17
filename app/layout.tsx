@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import SessionProviderWrapper from './components/SessionProviderWrapper';
 import '../styles/globals.css';
 
 export const metadata: Metadata = {
@@ -28,9 +29,11 @@ export default function RootLayout({
             />
           </Link>
         </header>
-        <div className="flex-grow px-4 py-8">
-          {children}
-        </div>
+        <SessionProviderWrapper>
+          <div className="flex-grow px-4 py-8">
+            {children}
+          </div>
+        </SessionProviderWrapper>
       </body>
     </html>
   );

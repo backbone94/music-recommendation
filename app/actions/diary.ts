@@ -3,7 +3,7 @@
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { analyzeSentiment } from './sentiment';
 import { getAdvice } from './advice';
 
@@ -34,6 +34,7 @@ export async function writeDiary(title: string, content: string) {
     });
 
     revalidatePath('/diary');
+    revalidateTag('diary');
   } catch (error) {
     console.error('Error creating diary entry:', error);
     throw new Error('Failed to create diary entry');
@@ -76,6 +77,7 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   });
 
   revalidatePath(`/diary/${diaryId}`);
+  revalidateTag('diary');
 }
 
 export async function deleteDiary(diaryId: number) {
@@ -102,4 +104,5 @@ export async function deleteDiary(diaryId: number) {
   });
 
   revalidatePath('/diary');
+  revalidateTag('diary');
 }
