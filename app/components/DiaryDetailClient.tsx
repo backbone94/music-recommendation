@@ -4,11 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { deleteDiary } from '@/app/actions/diary';
 import { Diary } from '@prisma/client';
-import { useQuery } from 'react-query';
-import { searchYouTube } from '../actions/youtube';
 import dynamic from 'next/dynamic';
-import { recommendMusic } from '../actions/music';
-import LoadingSpinner from './LoadingSpinner';
 import { formatDate } from '@/lib/date';
 import ConfirmModal from './ConfirmModal';
 
@@ -19,37 +15,20 @@ const BarChart = dynamic(() => import('./BarChart'), {
   ),
 });
 
-const extractVideoId = (url: string) => {
-  const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
-  return videoIdMatch ? videoIdMatch[1] : null;
-};
-
-const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
+const DiaryDetailClient = ({
+  diary,
+  musicSection,
+}: {
+  diary: Diary;
+  musicSection: React.ReactNode;
+}) => {
   const router = useRouter();
   const { positive, negative, neutral } = diary;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // showDeleteModal 등 state 변화로 리렌더될 때 새 객체가 생성되지 않도록 메모이제이션
-  // React.memo로 감싼 BarChart가 sentimentScores 참조 동일성을 확인해 리렌더를 건너뜀
   const sentimentScores = useMemo(
     () => ({ positive, negative, neutral }),
     [positive, negative, neutral]
-  );
-
-  const { data: track, error: trackError, isLoading: trackLoading } = useQuery(
-    ['track', diary.id],
-    () => recommendMusic(diary.content),
-    { staleTime: 1000 * 60 * 60 }
-  );
-
-  const { data: videoId, error: videoError, isLoading: videoLoading } = useQuery(
-    ['youtube', track],
-    () => searchYouTube(track!.title, track!.artist),
-    {
-      enabled: !!track,
-      select: (videoUrl) => extractVideoId(videoUrl),
-      staleTime: 1000 * 60 * 60,
-    }
   );
 
   const handleDelete = async () => {
@@ -107,26 +86,7 @@ const DiaryDetailClient = ({ diary }: { diary: Diary }) => {
         <h2 className="text-xl font-bold mb-4 text-gray-900 border-b-2 border-gray-300 pb-2">
           🎵 이 일기에 딱 맞는 노래를 추천해 드려요!
         </h2>
-        {trackError ? (
-          <div className="text-red-500 mt-4">Failed to load track.</div>
-        ) : trackLoading || videoLoading ? (
-          <LoadingSpinner />
-        ) : videoError ? (
-          <div className="text-red-500 mt-4">Error occurred while fetching video data.</div>
-        ) : (
-          videoId && (
-            <div className="mt-4">
-              <iframe
-                width="100%"
-                height="315"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="rounded shadow-md"
-              ></iframe>
-            </div>
-          )
-        )}
+        {musicSection}
       </div>
 
       <ConfirmModal

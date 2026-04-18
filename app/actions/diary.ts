@@ -15,10 +15,11 @@ export async function writeDiary(title: string, content: string) {
   }
 
   try {
-    const sentimentData = await analyzeSentiment(content);
+    const [sentimentData, advice] = await Promise.all([
+      analyzeSentiment(content),
+      getAdvice(content),
+    ]);
     const { positive, negative, neutral } = sentimentData.document.confidence;
-
-    const advice = await getAdvice(content);
 
     await prisma.diary.create({
       data: {

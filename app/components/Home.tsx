@@ -47,6 +47,7 @@ const Home = () => {
             alt={`${session.user.name}'s profile`}
             width={50}
             height={50}
+            sizes="50px"
             priority={true}
             className="rounded-full"
           />

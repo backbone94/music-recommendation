@@ -7,7 +7,12 @@ import { useRouter } from 'next/navigation';
 import { Diary } from '@prisma/client';
 import SkeletonLoading from './SkeletonLoading';
 
-const LineChart = dynamic(() => import('./LineChart'), { ssr: false });
+const LineChart = dynamic(() => import('./LineChart'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-80 max-w-xl mx-auto mt-8 p-4 rounded-lg shadow-2xl animate-pulse bg-gray-100" />
+  ),
+});
 
 const HistoryClient = ({
   initialDiaries,

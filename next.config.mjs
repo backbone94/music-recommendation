@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['avatars.githubusercontent.com', 'img1.kakaocdn.net', 'i.scdn.co'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+      { protocol: 'https', hostname: 'img1.kakaocdn.net' },
+      { protocol: 'https', hostname: 'i.scdn.co' },
+    ],
   },
   reactStrictMode: true,
 };
