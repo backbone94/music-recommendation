@@ -23,7 +23,7 @@ model Diary {
   content   String   @db.Text
   createdAt DateTime @default(now())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   mainSentiment String
   positive Float
   negative Float

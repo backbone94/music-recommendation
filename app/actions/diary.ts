@@ -3,9 +3,10 @@
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { analyzeSentiment } from './sentiment';
 import { getAdvice } from './advice';
+import { DIARY_PAGE_SIZE } from '@/lib/data/diary';
 
 export async function writeDiary(title: string, content: string) {
   const session = await getServerSession(authOptions);
@@ -25,7 +26,7 @@ export async function writeDiary(title: string, content: string) {
       data: {
         title,
         content,
-        userId: Number(session.user.id),
+        userId: session.user.id,
         mainSentiment: sentimentData.document.sentiment,
         positive,
         negative,
@@ -34,7 +35,6 @@ export async function writeDiary(title: string, content: string) {
       },
     });
 
-    revalidatePath('/diary');
     revalidateTag('diary');
   } catch (error) {
     console.error('Error creating diary entry:', error);
@@ -50,34 +50,37 @@ export async function updateDiary(diaryId: number, title: string, content: strin
   }
 
   const diary = await prisma.diary.findUnique({
-    where: {
-      id: diaryId,
-    },
+    where: { id: diaryId },
   });
 
   if (!diary || diary.userId !== session.user.id) {
     throw new Error('Diary not found or you do not have permission to edit this diary.');
   }
 
-  const sentimentData = await analyzeSentiment(content);
-  const { positive, negative, neutral } = sentimentData.document.confidence;
+  // 내용이 변경된 경우에만 감정 분석 재실행
+  const contentChanged = diary.content !== content;
+  let sentimentFields = {};
 
-  await prisma.diary.update({
-    where: {
-      id: diaryId,
-    },
-    data: {
-      title,
-      content,
-      userId: Number(session.user.id),
+  if (contentChanged) {
+    const sentimentData = await analyzeSentiment(content);
+    const { positive, negative, neutral } = sentimentData.document.confidence;
+    sentimentFields = {
       mainSentiment: sentimentData.document.sentiment,
       positive,
       negative,
       neutral,
+    };
+  }
+
+  await prisma.diary.update({
+    where: { id: diaryId },
+    data: {
+      title,
+      content,
+      ...sentimentFields,
     },
   });
 
-  revalidatePath(`/diary/${diaryId}`);
   revalidateTag('diary');
 }
 
@@ -89,9 +92,7 @@ export async function deleteDiary(diaryId: number) {
   }
 
   const diary = await prisma.diary.findUnique({
-    where: {
-      id: diaryId,
-    },
+    where: { id: diaryId },
   });
 
   if (!diary || diary.userId !== session.user.id) {
@@ -99,11 +100,23 @@ export async function deleteDiary(diaryId: number) {
   }
 
   await prisma.diary.delete({
-    where: {
-      id: diaryId,
-    },
+    where: { id: diaryId },
   });
 
-  revalidatePath('/diary');
   revalidateTag('diary');
+}
+
+export async function fetchMoreDiaries(skip: number) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    throw new Error('Not authenticated');
+  }
+
+  return prisma.diary.findMany({
+    where: { userId: session.user.id },
+    orderBy: { createdAt: 'desc' },
+    skip,
+    take: DIARY_PAGE_SIZE,
+  });
 }

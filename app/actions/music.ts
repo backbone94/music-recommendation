@@ -7,12 +7,14 @@ export type Track = {
   artist: string,
 }
 
+const OPENAI_MODEL_MUSIC = process.env.OPENAI_MODEL_MUSIC || 'gpt-3.5-turbo';
+
 export const recommendMusic = async (diaryContent: string) => {
   try {
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-3.5-turbo',
+        model: OPENAI_MODEL_MUSIC,
         messages: [
           {
             role: 'user',

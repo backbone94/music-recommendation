@@ -4,14 +4,17 @@ import { Diary } from '@prisma/client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { deleteDiary } from '@/app/actions/diary';
+import { deleteDiary, fetchMoreDiaries } from '@/app/actions/diary';
 import ConfirmModal from './ConfirmModal';
 
-const DiaryListClient = ({ initialDiaries }: { initialDiaries: Diary[] }) => {
+const DiaryListClient = ({ initialDiaries, totalCount }: { initialDiaries: Diary[]; totalCount: number }) => {
   const router = useRouter();
   const [diaries, setDiaries] = useState(initialDiaries);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiaryId, setSelectedDiaryId] = useState<number | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const hasMore = diaries.length < totalCount;
 
   const openModal = (id: number) => {
     setSelectedDiaryId(id);
@@ -31,6 +34,18 @@ const DiaryListClient = ({ initialDiaries }: { initialDiaries: Diary[] }) => {
       closeModal();
     } catch (error) {
       console.error('Failed to delete diary:', error);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    setIsLoadingMore(true);
+    try {
+      const more = await fetchMoreDiaries(diaries.length);
+      setDiaries((prev) => [...prev, ...more]);
+    } catch (error) {
+      console.error('Failed to load more diaries:', error);
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
@@ -71,6 +86,18 @@ const DiaryListClient = ({ initialDiaries }: { initialDiaries: Diary[] }) => {
           </li>
         ))}
       </ul>
+
+      {hasMore && (
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={handleLoadMore}
+            disabled={isLoadingMore}
+            className="px-6 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition duration-200 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isLoadingMore ? '불러오는 중...' : '더 보기'}
+          </button>
+        </div>
+      )}
 
       <ConfirmModal
         isOpen={isModalOpen}

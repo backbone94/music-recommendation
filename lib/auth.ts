@@ -15,47 +15,31 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (!account) {
-        console.error("Account information is missing.");
-        return false;
-      }
-      try {
-        const existingUser = await prisma.user.findFirst({
-          where: {
-            provider: account.provider,
-            providerAccountId: account.providerAccountId,
-          },
-        });
-
-        if (!existingUser) {
-          await prisma.user.create({
-            data: {
-              email: user.email as string,
-              name: user.name as string,
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-            },
-          });
-        }
-      } catch (error) {
-        console.error('Error saving user to DB:', error);
-        return false;
-      }
-      return true;
+    async signIn({ account }) {
+      return !!account;
     },
     async jwt({ token, account, user }) {
       if (!account || !user) {
         return token;
       }
-      const existingUser = await prisma.user.findFirst({
+      // upsert로 signIn + jwt 두 번의 DB 쿼리를 하나로 통합
+      const dbUser = await prisma.user.upsert({
         where: {
+          provider_providerAccountId: {
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+          },
+        },
+        create: {
+          email: user.email as string,
+          name: user.name as string,
           provider: account.provider,
           providerAccountId: account.providerAccountId,
         },
+        update: {},
       });
 
-      token.userId = existingUser ? existingUser.id : Number(user.id);
+      token.userId = dbUser.id;
       token.provider = account.provider;
       token.providerAccountId = account.providerAccountId;
       return token;

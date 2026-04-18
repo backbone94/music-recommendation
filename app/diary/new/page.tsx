@@ -44,7 +44,8 @@ const NewDiaryEntry = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
+            disabled={isLoading}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
         </div>
         <div>
@@ -54,7 +55,8 @@ const NewDiaryEntry = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200"
+            disabled={isLoading}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
             rows={5}
           ></textarea>
         </div>

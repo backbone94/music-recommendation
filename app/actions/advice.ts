@@ -5,6 +5,8 @@ import { authOptions } from '@/lib/auth';
 import axios from 'axios';
 import prisma from '@/lib/prisma';
 
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4';
+
 export const getAdvice = async (content: string) => {
   const session = await getServerSession(authOptions);
 
@@ -15,7 +17,7 @@ export const getAdvice = async (content: string) => {
   const response = await axios.post(
     'https://api.openai.com/v1/chat/completions',
     {
-      model: 'gpt-4',
+      model: OPENAI_MODEL,
       messages: [
         {
           role: 'user',
@@ -33,9 +35,7 @@ export const getAdvice = async (content: string) => {
   );
 
   const advice = response.data.choices[0].message.content.trim() as string;
-  const cleanedAdvice = advice.replace(/^"|"$/g, '');
-
-  return cleanedAdvice;
+  return advice.replace(/^"|"$/g, '');
 }
 
 export const generateWeeklyAnalysis = async (contents: string) => {
@@ -51,7 +51,7 @@ export const generateWeeklyAnalysis = async (contents: string) => {
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4',
+        model: OPENAI_MODEL,
         messages: [
           {
             role: 'user',

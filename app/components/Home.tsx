@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { deleteUser } from '@/app/actions/user';
 import LoadingSpinner from './LoadingSpinner';
 import SignIn from './SignIn';
+import ConfirmModal from './ConfirmModal';
 
 const Home = () => {
   const router = useRouter();
@@ -82,28 +83,14 @@ const Home = () => {
         )}
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-80">
-            <h2 className="text-xl font-bold mb-4">정말 회원 탈퇴를 하시겠습니까?</h2>
-            <p className="mb-4">이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?</p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-              >
-                취소
-              </button>
-              <button
-                onClick={handleWithdrawal}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                회원 탈퇴
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={handleWithdrawal}
+        title="정말 회원 탈퇴를 하시겠습니까?"
+        message="이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?"
+        confirmLabel="회원 탈퇴"
+      />
     </div>
   );
 };
